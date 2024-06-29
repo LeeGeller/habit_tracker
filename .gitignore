@@ -137,3 +137,6 @@ dmypy.json
 pg_hba.conf
 private.json
 private.py
+
+*.xml
+*.iml
