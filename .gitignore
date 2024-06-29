@@ -132,7 +132,7 @@ dmypy.json
 /venv/
 .idea
 .env
-
+.idea/
 # files
 pg_hba.conf
 private.json
