@@ -8,3 +8,6 @@ requests==2.32.3
 drf-yasg==1.21.7
 django-cors-headers==4.4.0
 django-rest-swagger==2.2.0
+celery==5.4.0
+python-crontab==3.1.0
+django-celery-beat==2.6.0
