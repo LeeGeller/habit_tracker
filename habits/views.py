@@ -26,6 +26,11 @@ class HabitsViewSet(viewsets.ModelViewSet):
 
         return Response(HabitsSerializer(habit).data)
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().filter(is_public=True)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
