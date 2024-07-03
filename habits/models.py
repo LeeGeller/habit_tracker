@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from users.models import User
@@ -13,7 +15,9 @@ class Habit(models.Model):
     frequency = models.PositiveIntegerField(default=1, verbose_name='Количество повторений')
     time_to_complete = models.DurationField(verbose_name='Время на выполнение')
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец')
-    reward = models.ForeignKey('Reward', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Награда')
+    reward_content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, blank=True)
+    reward_object_id = models.PositiveIntegerField(null=True, blank=True)
+    reward = GenericForeignKey('reward_content_type', 'reward_object_id')
 
     def set_time_to_complete(self, time):
         self.time_to_complete = timedelta(seconds=time)
