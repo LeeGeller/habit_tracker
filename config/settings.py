@@ -163,3 +163,4 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 # }
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_SERVER = os.getenv("BOT_SERVER")
