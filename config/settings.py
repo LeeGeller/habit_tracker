@@ -161,3 +161,5 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 #         'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
 #     },
 # }
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
