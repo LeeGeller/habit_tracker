@@ -10,6 +10,7 @@ from habits.telegram import remind_about_habit
 @shared_task
 def remainder_habit(user_id):
     now_time = timezone.now()
+    print(now_time)
     habit_time = now_time + timedelta(minutes=30)
 
     habit_identification = Habit.objects.filter(

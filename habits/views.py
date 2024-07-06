@@ -25,7 +25,6 @@ class HabitsViewSet(viewsets.ModelViewSet):
 
         data = check_reward_models(validated_data)
         habit = Habit.objects.create(**data, owner=request.user)
-
         return Response(HabitsSerializer(habit).data)
 
     def perform_create(self, serializer):

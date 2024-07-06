@@ -26,7 +26,7 @@ async def send_welcome_message(message: types.Message):
 async def remind_about_habit(habit_list):
     for habit in habit_list:
         await bot.send_message(
-            habit.owner,
+            habit.tg_id,
             f"I will {habit.action} at {habit.time_to_complete} in {habit.place}",
         )
 
