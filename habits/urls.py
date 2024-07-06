@@ -6,8 +6,7 @@ from habits.views import HabitsViewSet, RewardViewSet
 appname = HabitsConfig.name
 
 router = DefaultRouter()
-router.register(r'habits', HabitsViewSet, basename="habits")
-router.register(r'rewards', RewardViewSet, basename="rewards")
+router.register(r"habits", HabitsViewSet, basename="habits")
+router.register(r"rewards", RewardViewSet, basename="rewards")
 
-urlpatterns = [
-              ] + router.urls
+urlpatterns = [] + router.urls

@@ -37,7 +37,7 @@ class HabitsViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def get_permissions(self):
-        if self.action in ['retrieve', 'update', 'destroy']:
+        if self.action in ["retrieve", "update", "destroy"]:
             self.permission_classes = [IsAuthenticated, IsOwner]
         else:
             self.permission_classes = [IsAuthenticated]
@@ -53,7 +53,7 @@ class RewardViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_permissions(self):
-        if self.action in ['retrieve', 'update', 'destroy']:
+        if self.action in ["retrieve", "update", "destroy"]:
             self.permission_classes = [IsAuthenticated, IsOwner]
         else:
             self.permission_classes = [IsAuthenticated]

@@ -14,7 +14,9 @@ def remainder_habit(user_id):
     time_to_remind = now_time + timedelta(minutes=30)
     print(time_to_remind)
 
-    habit_queryset = Habit.objects.filter(owner=user_id, time_to_complete__lte=time_to_remind)
+    habit_queryset = Habit.objects.filter(
+        owner=user_id, time_to_complete__lte=time_to_remind
+    )
 
     habits_list = list(habit_queryset)
     remind_about_habit(habits_list)
