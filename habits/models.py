@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.utils import timezone
 
 from users.models import User
 
@@ -22,7 +23,7 @@ class Habit(models.Model):
     )
     reward_object_id = models.PositiveIntegerField(null=True, blank=True)
     reward = GenericForeignKey("reward_content_type", "reward_object_id")
-    time_for_habit = models.DateTimeField(verbose_name="Время выполнения привычки")
+    time_for_habit = models.DateTimeField(default=timezone.now, verbose_name="Время выполнения привычки")
 
     def set_time_to_complete(self, time):
         self.time_to_complete = timedelta(seconds=time)

@@ -22,7 +22,7 @@ def check_reward_models(validated_data):
 
 def check_time_to_complete(validated_data):
     time = validated_data.get("time_to_complete")
-    if time and (0 < time < 121):
+    if time and (timedelta(seconds=0) < time < timedelta(seconds=121)):
         return validated_data
     else:
         raise ValidationError("Time must be more than 0 and less than 120 seconds")
@@ -30,7 +30,7 @@ def check_time_to_complete(validated_data):
 
 def check_frequency(validated_data):
     frequency = validated_data.get("frequency")
-    if frequency and frequency > 8:
+    if frequency and frequency > 0:
         return validated_data
     else:
         raise ValidationError("Frequency must be more than 0")
