@@ -18,6 +18,7 @@ class Habit(models.Model):
     reward_content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, blank=True)
     reward_object_id = models.PositiveIntegerField(null=True, blank=True)
     reward = GenericForeignKey('reward_content_type', 'reward_object_id')
+    time_for_habit = models.DateTimeField(verbose_name='Время выполнения привычки')
 
     def set_time_to_complete(self, time):
         self.time_to_complete = timedelta(seconds=time)
