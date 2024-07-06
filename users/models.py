@@ -5,7 +5,7 @@ from django.db import models
 class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
-    tg_nickname = models.CharField(max_length=255)
+    tg_id = models.CharField(max_length=255, blank=True, null=True)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
