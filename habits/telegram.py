@@ -1,8 +1,7 @@
 from aiogram import Bot, Dispatcher, types, Router
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
-from aiogram.filters import Command
-from aiogram.fsm.state import StatesGroup, State
+from aiogram.filters import Command, CommandStart
 
 from config.settings import BOT_TOKEN, BOT_SERVER
 
@@ -12,22 +11,19 @@ dp = Dispatcher()
 router = Router()
 
 
-class Form(StatesGroup):
-    username = State()
-    password = State()
-
-
-@dp.message(Command("start"))
+@dp.message(CommandStart())
 async def send_welcome_message(message: types.Message):
+    print(message)
     await message.answer(f"Hi, {message.from_user.full_name}! I'm your habit-bot.")
 
 
-@router.message(Form.username)
-async def remind_about_habit(habit_list):
-    for habit in habit_list:
+@router.message()
+async def remind_about_habit(habit_dict):
+
+    for user_id, habits in habit_dict.items():
         await bot.send_message(
-            habit.tg_id,
-            f"I will {habit.action} at {habit.time_to_complete} in {habit.place}",
+            user_id,
+            f"I will {habits.action} at {habits.time_to_complete} in {habits.place}",
         )
 
 

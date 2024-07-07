@@ -17,7 +17,7 @@ class Habit(models.Model):
         default=1, verbose_name="Количество повторений"
     )
     time_to_complete = models.DurationField(verbose_name="Время на выполнение")
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Владелец")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Владелец", related_name='habits')
     reward_content_type = models.ForeignKey(
         ContentType, on_delete=models.SET_NULL, null=True, blank=True
     )

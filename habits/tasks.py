@@ -3,19 +3,20 @@ from datetime import timedelta
 from celery import shared_task
 from django.utils import timezone
 
-from habits.models import Habit
 from habits.telegram import remind_about_habit
+from users.models import User
 
 
 @shared_task
-def remainder_habit(user_id):
+def remainder_habit():
     now_time = timezone.now()
-    print(now_time)
     habit_time = now_time + timedelta(minutes=30)
 
-    habit_identification = Habit.objects.filter(
-        owner=user_id, time_for_habit__lte=habit_time
-    ).values_list('id', flat=True)
+    users_with_active_habits = User.objects.filter(habits__time_for_habit=habit_time)
 
-    habits_list = list(habit_identification)
-    remind_about_habit.delay(habits_list)
+    habits = dict()
+
+    for user in users_with_active_habits:
+        habits['user.id'] = user
+
+    remind_about_habit.delay(habits)
