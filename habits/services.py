@@ -1,10 +1,12 @@
+import logging
 from datetime import timedelta
 
 from rest_framework.exceptions import ValidationError
 
 from habits.models import Habit, Reward
+from habits.telegram import bot
 
-
+logger = logging.getLogger(__name__)
 def check_reward_models(validated_data):
     reward_content_type = validated_data.get("reward_content_type")
     reward_object_id = validated_data.get("reward_object_id")
@@ -34,3 +36,15 @@ def check_frequency(validated_data):
         return validated_data
     else:
         raise ValidationError("Frequency must be more than 0")
+
+
+def create_message_to_user(user_id, habits):
+    message = ""
+    for habit in habits:
+        try:
+            message += f"I will do to {habit.action} at {habit.time_for_habit} in {habit.place}\n"
+            bot.send_message(user_id, message)
+            logger.info(f"Sent {message} to {user_id}")
+
+        except Exception as e:
+            logger.error(f"Error creating task for user {user_id}: {e}")
