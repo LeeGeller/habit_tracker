@@ -1,29 +1,48 @@
-from aiogram import Bot, Dispatcher, types, Router
-from aiogram.client.session.aiohttp import AiohttpSession
-from aiogram.client.telegram import TelegramAPIServer
-from aiogram.filters import CommandStart
+import time
 
-from config.settings import BOT_TOKEN, BOT_SERVER
+import requests
 
-session = AiohttpSession(api=TelegramAPIServer.from_base(BOT_SERVER))
-bot = Bot(BOT_TOKEN, session=session)
-dp = Dispatcher()
-router = Router()
+from config.settings import BOT_TOKEN
+
+URL = f'https://api.telegram.org/bot{BOT_TOKEN}'
 
 
-@dp.message(CommandStart())
-async def send_welcome_message(message: types.Message):
-    await message.answer(f"Hi, {message.from_user.full_name}! I'm your habit-bot.")
+def get_updates(offset=None):
+    url = URL + '/getUpdates'
+    params = {'timeout': 100, 'offset': offset}
+    response = requests.get(url, params=params)
+    result_json = response.json()['result']
+    return result_json
 
 
-dp.include_router(router)
+def send_message(chat_id, text):
+    url = URL + '/sendMessage'
+    payload = {'chat_id': chat_id, 'text': text}
+    requests.post(url, data=payload)
 
 
-async def main():
-    await dp.start_polling(bot)
+def handle_updates(updates):
+    for update in updates:
+        message = update.get('message')
+        if not message:
+            continue
+
+        chat_id = message['chat']['id']
+        text = message.get('text')
+
+        if text == '/start':
+            send_message(chat_id, 'Hi! Welcome to your habit tracker bot.')
 
 
-if __name__ == "__main__":
-    import asyncio
+def main():
+    offset = None
+    while True:
+        updates = get_updates(offset)
+        if updates:
+            handle_updates(updates)
+            offset = updates[-1]['update_id'] + 1
+        time.sleep(1)
 
-    asyncio.run(main())
+
+if __name__ == '__main__':
+    main()
