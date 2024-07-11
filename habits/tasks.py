@@ -1,53 +1,37 @@
-from datetime import timedelta
+import logging
+from datetime import datetime, timedelta
 
+import pytz
 from celery import shared_task
-from django.utils import timezone
-from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 from habits.services import create_message_to_user
+from habits.telegram import send_message
 from users.models import User
-
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 @shared_task
 def remainder_habit():
-    now_time = timezone.now()
-    habit_time = now_time + timedelta(hours=3, minutes=30)
+    logger = logging.getLogger(__name__)
 
-    users_with_active_habits = User.objects.filter(habits__time_for_habit__range=(now_time, habit_time))
+    tz = pytz.timezone("Europe/Moscow")
+    now = datetime.now(tz)
 
-    for user in users_with_active_habits:
-        try:
-            habits = user.habits.filter(time_for_habit__range=(now_time, habit_time))
+    habit_time = now + timedelta(minutes=30)
 
-            for habit in habits:
-                name = f'reminder_habit_{user.id}_{habit.id}_{now_time}'
+    users_with_active_habits = User.objects.filter(habits__time_for_habit__range=(now, habit_time)).distinct()
 
-                schedule, created = CrontabSchedule.objects.get_or_create(
-                    minute=habit.time_for_habit.minute,
-                    hour=habit.time_for_habit.hour,
-                    day_of_week='*',
-                    day_of_month='*',
-                    month_of_year='*',
-                )
-
-                PeriodicTask.objects.update_or_create(
-                    crontab=schedule,
-                    name=name,
-                    defaults={
-                        'task': 'habits.tasks.remainder_habit',
-                        'args': f'[{user.id}, {habit.id}]',
-                    }
-                )
-
-            user_habits = user.habits.all()
-
-            create_message_to_user(user.id, user_habits)
-
-            logger.info(f"Task created/updated for user {user.id} and habits {[habit.id for habit in habits]}")
-
-        except Exception as e:
-            logger.error(f"Error creating task for user {user.id}: {e}")
+    try:
+        for user in users_with_active_habits:
+            habits = user.habits.filter(time_for_habit__range=(now, habit_time))
+            if habits.exists():
+                identif_id, message = create_message_to_user(user.tg_id, habits)
+                logger.info(f"Task created/updated for user {user.tg_id} and habit {habits}")
+                try:
+                    send_message(identif_id, message)
+                    logger.info(f"Sent message: {message} to user {user.tg_id}")
+                except Exception as e:
+                    logger.error(f"Error sending message to user {user.tg_id}: {e}")
+            else:
+                continue
+    except Exception as e:
+        logger.error(f"Error processing habits for user {users_with_active_habits}: {e}")

@@ -157,6 +157,7 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": timedelta(minutes=1),
     },
 }
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 BOT_SERVER = os.getenv("BOT_SERVER")

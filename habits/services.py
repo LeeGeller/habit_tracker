@@ -4,9 +4,10 @@ from datetime import timedelta
 from rest_framework.exceptions import ValidationError
 
 from habits.models import Habit, Reward
-from habits.telegram import bot
 
 logger = logging.getLogger(__name__)
+
+
 def check_reward_models(validated_data):
     reward_content_type = validated_data.get("reward_content_type")
     reward_object_id = validated_data.get("reward_object_id")
@@ -42,9 +43,8 @@ def create_message_to_user(user_id, habits):
     message = ""
     for habit in habits:
         try:
-            message += f"I will do to {habit.action} at {habit.time_for_habit} in {habit.place}\n"
-            bot.send_message(user_id, message)
-            logger.info(f"Sent {message} to {user_id}")
-
+            message += f"I will do {habit.action} at {habit.time_for_habit.strftime("%X")} in {habit.place}\n"
+            logger.info(f"Created message: {message} for user {user_id}")
         except Exception as e:
-            logger.error(f"Error creating task for user {user_id}: {e}")
+            logger.error(f"Error creating message for user {user_id}: {e}")
+    return user_id, message
