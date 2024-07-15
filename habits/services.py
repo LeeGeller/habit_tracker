@@ -1,8 +1,10 @@
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
 
+import pytz
 from rest_framework.exceptions import ValidationError
 
+from config.settings import TIME_ZONE
 from habits.models import Habit, Reward
 
 logger = logging.getLogger(__name__)
@@ -41,10 +43,18 @@ def check_frequency(validated_data):
 
 def create_message_to_user(user_id, habits):
     message = ""
-    for habit in habits:
-        try:
-            message += f"I will do {habit.action} at {habit.time_for_habit.strftime("%X")} in {habit.place}\n"
-            logger.info(f"Created message: {message} for user {user_id}")
-        except Exception as e:
-            logger.error(f"Error creating message for user {user_id}: {e}")
+
+    try:
+        message += f"I will do {habits.action} at {habits.time_for_habit.strftime('%X')} in {habits.place}\n"
+        logger.info(f"Created message: {message} for user {user_id}")
+    except Exception as e:
+        logger.error(f"Error creating message for user {user_id}: {e}")
     return user_id, message
+
+
+def create_habit_time():
+    tz = pytz.timezone(TIME_ZONE)
+    now = datetime.now(tz)
+    now, habit_time = now + timedelta(minutes=30), now + timedelta(minutes=31)
+
+    return now, habit_time
