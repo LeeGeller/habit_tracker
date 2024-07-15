@@ -25,7 +25,7 @@ class HabitsViewSet(viewsets.ModelViewSet):
         check_frequency(validated_data)
 
         data = check_reward_models(validated_data)
-        habit = Habit.objects.create(**data, owner=request.user, frequency=validated_data.get("frequency"))
+        habit = Habit.objects.create(**data, owner=request.user)
         return Response(HabitsSerializer(habit).data)
 
     def perform_create(self, serializer):

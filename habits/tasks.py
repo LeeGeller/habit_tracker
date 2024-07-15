@@ -25,9 +25,13 @@ def remainder_habit():
 
             try:
                 send_message(identif_id, message)
-                habit.last_remember += timedelta(days=habit.frequency)
-                habit.save()
                 logger.info(f"Sent message: {message} to user {habit.owner.tg_id}")
+
+                habit.time_for_habit += timedelta(days=habit.frequency)
+                habit.last_remember = datetime.now()
+                habit.save()
+
+                logger.info(f"Task data {habit.last_remember}")
             except Exception as e:
                 logger.error(f"Error sending message to user {habit.owner.tg_id}: {e}")
     except Exception as e:
