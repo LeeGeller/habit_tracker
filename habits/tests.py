@@ -41,3 +41,14 @@ class HabitTestCase(TestCase):
             time_for_habit=1,
             is_pleasent=False,
             owner=user.id, )
+
+        user_2 = User.objects.create(
+            email=self.email, is_active=self.is_active, tg_id=self.tg_id
+        )
+        user_2.set_password(self.password_1)
+        user_2.save()
+
+        response = self.client.post("/users/token/", {"email": self.email, "password": self.password_1}
+                                    )
+        self.token = response.data["access"]
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
