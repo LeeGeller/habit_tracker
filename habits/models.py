@@ -24,7 +24,7 @@ class Habit(models.Model):
     is_public = models.BooleanField(default=False, verbose_name="Публичная")
     is_pleasent = models.BooleanField(default=False, verbose_name="Полезная")
     frequency = models.PositiveIntegerField(
-        default=1, verbose_name="Количество повторений", max_length=7
+        default=1, verbose_name="Количество повторений"
     )
     time_to_complete = models.DurationField(verbose_name="Время на выполнение")
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Владелец", related_name='habits')

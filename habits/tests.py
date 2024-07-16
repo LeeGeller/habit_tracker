@@ -1,54 +1,66 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase
 
 from habits.models import Reward, Habit
 from users.models import User
 
 
-class HabitTestCase(TestCase):
-    id = 1
-    email = 'test_test_u@gmail.ru'
-    is_active = True
-    tg_id = 1142947908
-    password_1 = '1234'
-    password_2 = '1234'
-
+class HabitTestCase(APITestCase):
     def setUp(self):
-        user = User.objects.create(
+        self.email = 'test_test_u@gmail.com'
+        self.is_active = True
+        self.tg_id = 1142947908
+        self.password = '1234'
+
+        self.user = User.objects.create(
             email=self.email, is_active=self.is_active, tg_id=self.tg_id
         )
-        user.set_password(self.password_1)
-        user.save()
+        self.user.set_password(self.password)
+        self.user.save()
 
-        response = self.client.post("/users/token/", {"email": self.email, "password": self.password_1}
-                                    )
+        response = self.client.post("token/refresh/", {"email": self.email, "password": self.password})
         self.token = response.data["access"]
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
 
-        reward = Reward.objects.create(
+        self.reward = Reward.objects.create(
             reward="test_reward",
-            owner=user.id
+            owner=self.user
         )
-        habit_pleasent = Habit.objects.create(
-            name="test_habit 1",
-            description="test_description 1",
-            time_for_habit=1,
+        self.habit_pleasent = Habit.objects.create(
+            action="test_habit 1",
+            place="test_place 1",
+            frequency=1,
+            time_to_complete="00:30:00",
             is_pleasent=True,
-            owner=user.id,
+            owner=self.user,
+            time_for_habit="2024-07-16T12:00",
+            last_remember="2024-07-16T12:00"
         )
-        habit_not_plesant = Habit.objects.create(
-            name="test_habit 2",
-            description="test_description 2",
-            time_for_habit=1,
+        self.habit_not_plesant = Habit.objects.create(
+            action="test_habit 2",
+            place="test_place 2",
+            frequency=1,
+            time_to_complete="00:30:00",
             is_pleasent=False,
-            owner=user.id, )
-
-        user_2 = User.objects.create(
-            email=self.email, is_active=self.is_active, tg_id=self.tg_id
+            owner=self.user,
+            time_for_habit="2024-07-16T12:00",
+            last_remember="2024-07-16T12:00"
         )
-        user_2.set_password(self.password_1)
-        user_2.save()
 
-        response = self.client.post("/users/token/", {"email": self.email, "password": self.password_1}
-                                    )
-        self.token = response.data["access"]
-        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
+    def test_habit_list(self):
+        response = self.client.get("/habits/")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 2)
+
+    def test_create_habit(self):
+        data = {
+            "action": "test_habit 3",
+            "place": "test_place 3",
+            "frequency": 1,
+            "time_to_complete": "00:30:00",
+            "is_pleasent": False,
+            "time_for_habit": "2024-07-16T12:00",
+            "last_remember": "2024-07-16T12:00"
+        }
+        response = self.client.post("/habits/", data, format='json')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['action'], "test_habit 3")

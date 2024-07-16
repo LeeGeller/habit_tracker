@@ -35,7 +35,7 @@ def check_time_to_complete(validated_data):
 
 def check_frequency(validated_data):
     frequency = validated_data.get("frequency")
-    if frequency and frequency > 0:
+    if 0 < frequency < 8:
         return validated_data
     else:
         raise ValidationError("Frequency must be more than 0")
