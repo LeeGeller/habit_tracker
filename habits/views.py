@@ -6,7 +6,11 @@ from rest_framework.response import Response
 
 from habits.models import Habit, Reward
 from habits.paginatirs import HabitPaginator, RewardPaginator
-from habits.serializer import HabitsSerializer, RewardSerializer, HabitsUsersListSerializer
+from habits.serializer import (
+    HabitsSerializer,
+    RewardSerializer,
+    HabitsUsersListSerializer,
+)
 from habits.services import check_reward_models, check_time_to_complete, check_frequency
 from users.permissions import IsOwner
 

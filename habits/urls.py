@@ -10,4 +10,6 @@ router = DefaultRouter()
 router.register(r"habits", HabitsViewSet, basename="habits")
 router.register(r"rewards", RewardViewSet, basename="rewards")
 
-urlpatterns = [path('users-list/', HabitsUsersList.as_view(), name="users-habits"), ] + router.urls
+urlpatterns = [
+    path("users-list/", HabitsUsersList.as_view(), name="users-habits"),
+] + router.urls

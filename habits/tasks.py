@@ -15,13 +15,16 @@ def remainder_habit():
     now, habit_time = create_habit_time()
 
     habits_with_users = Habit.objects.filter(
-        time_for_habit__range=(now, habit_time)).select_related('owner')
+        time_for_habit__range=(now, habit_time)
+    ).select_related("owner")
     logger.info(f"Found {habits_with_users} habits with users")
 
     try:
         for habit in habits_with_users:
             identif_id, message = create_message_to_user(habit.owner.tg_id, habit)
-            logger.info(f"Task created/updated for user {habit.owner.tg_id} and habit {habit}")
+            logger.info(
+                f"Task created/updated for user {habit.owner.tg_id} and habit {habit}"
+            )
 
             try:
                 send_message(identif_id, message)
