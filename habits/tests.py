@@ -1,4 +1,3 @@
-from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from habits.models import Reward, Habit

@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals
 import os
-from datetime import timedelta
 
 from celery import Celery
 
