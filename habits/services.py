@@ -16,11 +16,12 @@ def check_reward_models(validated_data):
     model_class = reward_content_type.model_class()
 
     if reward_object_id:
-        if issubclass(model_class, Habit) and validated_data.get("is_pleasent"):
+        if issubclass(model_class, Habit) and validated_data.get("is_pleasent") and not validated_data.get('reward'):
             habit_model = Habit.objects.get(pk=reward_object_id, is_pleasent=True)
             validated_data["reward"] = habit_model
             return validated_data
-        elif issubclass(model_class, Reward) and not validated_data.get("is_pleasent"):
+        elif issubclass(model_class, Reward) and not validated_data.get("is_pleasent") and not validated_data.get(
+                'reward'):
             reward_model = Reward.objects.get(pk=reward_content_type)
             validated_data["reward"] = reward_model
             return validated_data
