@@ -19,10 +19,11 @@ def check_reward_models(validated_data):
         if issubclass(model_class, Habit) and validated_data.get("is_pleasent"):
             habit_model = Habit.objects.get(pk=reward_object_id, is_pleasent=True)
             validated_data["reward"] = habit_model
-    elif issubclass(model_class, Reward) and not validated_data.get("is_pleasent"):
-        reward_model = Reward.objects.get(pk=reward_content_type)
-        validated_data["reward"] = reward_model
-    return validated_data
+            return validated_data
+        elif issubclass(model_class, Reward) and not validated_data.get("is_pleasent"):
+            reward_model = Reward.objects.get(pk=reward_content_type)
+            validated_data["reward"] = reward_model
+            return validated_data
 
 
 def check_time_to_complete(validated_data):

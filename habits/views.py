@@ -28,6 +28,7 @@ class HabitsViewSet(viewsets.ModelViewSet):
         check_time_to_complete(validated_data)
         check_frequency(validated_data)
         data = check_reward_models(validated_data)
+
         serializer.save(**data, owner=request.user)
         return Response(serializer.data)
 
@@ -39,6 +40,18 @@ class HabitsViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         habit = self.get_object()
         serializer = self.get_serializer(habit)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        check_time_to_complete(validated_data)
+        check_frequency(validated_data)
+        data = check_reward_models(validated_data)
+
+        serializer.save(**data, owner=request.user)
         return Response(serializer.data)
 
     def get_permissions(self):
